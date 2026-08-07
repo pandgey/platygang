@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -15,6 +16,9 @@ public class SC_SpaceshipController : MonoBehaviour
     public float cameraSmooth = 4f;
     public RectTransform crosshairTexture;
     public float mouseSensitivity = 0.1f;
+    // Double tap A or D to barrel roll that way
+    public float barrelRollDuration = 0.6f;
+    public float doubleTapWindow = 0.3f;
 
     float speed;
     Rigidbody r;
@@ -31,6 +35,12 @@ public class SC_SpaceshipController : MonoBehaviour
     float rollInput;
     bool accelerating;
     bool decelerating;
+
+    float lastLeftTapTime = -1f;
+    float lastRightTapTime = -1f;
+    bool barrelRolling;
+    // Degrees the coroutine has queued for the next physics step to apply
+    float barrelRollStep;
 
     // Read by the HUD throttle bar: current speed as a share of full boost
     public float ThrottleFraction { get { return Mathf.Clamp01(speed / accelerationSpeed); } }
@@ -81,11 +91,56 @@ public class SC_SpaceshipController : MonoBehaviour
             {
                 rollInput = -1;
             }
+
+            // Same keys as manual roll, so a quick double tap snaps the ship
+            if (keyboard.aKey.wasPressedThisFrame)
+            {
+                TryBarrelRoll(ref lastLeftTapTime, 1f);
+            }
+
+            if (keyboard.dKey.wasPressedThisFrame)
+            {
+                TryBarrelRoll(ref lastRightTapTime, -1f);
+            }
         }
 
         // Hold Shift to speed up, Ctrl to slow down.
         accelerating = keyboard != null && keyboard.shiftKey.isPressed;
         decelerating = keyboard != null && keyboard.ctrlKey.isPressed;
+    }
+
+    void TryBarrelRoll(ref float lastTapTime, float direction)
+    {
+        if (!barrelRolling && Time.time - lastTapTime <= doubleTapWindow)
+        {
+            StartCoroutine(BarrelRoll(direction));
+            // Cleared so a third tap cannot immediately chain another roll
+            lastTapTime = -1f;
+            return;
+        }
+
+        lastTapTime = Time.time;
+    }
+
+    IEnumerator BarrelRoll(float direction)
+    {
+        barrelRolling = true;
+
+        float remaining = 360f;
+        float degreesPerSecond = 360f / barrelRollDuration;
+
+        while (remaining > 0f)
+        {
+            // Clamped to what is left, so the roll lands on exactly 360 degrees
+            float step = Mathf.Min(degreesPerSecond * Time.fixedDeltaTime, remaining);
+            remaining -= step;
+            barrelRollStep += direction * step;
+
+            // Paced by the physics clock, since FixedUpdate applies the rotation
+            yield return new WaitForFixedUpdate();
+        }
+
+        barrelRolling = false;
     }
 
     void FixedUpdate()
@@ -119,7 +174,12 @@ public class SC_SpaceshipController : MonoBehaviour
         mouseXSmooth = Mathf.Lerp(mouseXSmooth, lookInput.x * rotationSpeed, Time.deltaTime * cameraSmooth);
         mouseYSmooth = Mathf.Lerp(mouseYSmooth, lookInput.y * rotationSpeed, Time.deltaTime * cameraSmooth);
         lookInput = Vector2.zero;
-        Quaternion localRotation = Quaternion.Euler(-mouseYSmooth, mouseXSmooth, rollInput * rotationSpeed);
+        // Consume whatever the barrel roll queued since the last physics step
+        float barrelRoll = barrelRollStep;
+        barrelRollStep = 0f;
+        // Manual roll is ignored mid-roll so the two inputs cannot fight
+        float roll = barrelRolling ? 0f : rollInput * rotationSpeed;
+        Quaternion localRotation = Quaternion.Euler(-mouseYSmooth, mouseXSmooth, roll + barrelRoll);
         lookRotation = lookRotation * localRotation;
         transform.rotation = lookRotation;
         rotationZ -= mouseXSmooth;
