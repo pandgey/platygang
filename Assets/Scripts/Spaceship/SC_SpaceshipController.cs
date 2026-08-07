@@ -19,6 +19,8 @@ public class SC_SpaceshipController : MonoBehaviour
     // Double tap A or D to barrel roll that way
     public float barrelRollDuration = 0.6f;
     public float doubleTapWindow = 0.3f;
+    // How far sideways the dodge carries the ship, in world units
+    public float barrelRollDistance = 8f;
 
     float speed;
     Rigidbody r;
@@ -28,9 +30,7 @@ public class SC_SpaceshipController : MonoBehaviour
     float mouseYSmooth = 0;
     Vector3 defaultShipRotation;
 
-    // Input is sampled per frame in Update and consumed in FixedUpdate, which may
-    // run zero or several times per frame. Reading it straight from FixedUpdate
-    // drops and double-counts mouse movement.
+    // Input is sampled per frame in Update and consumed in FixedUpdate, which may run zero or several times per frame. Reading it straight from FixedUpdate drops and double-counts mouse movement.
     Vector2 lookInput;
     float rollInput;
     bool accelerating;
@@ -41,6 +41,10 @@ public class SC_SpaceshipController : MonoBehaviour
     bool barrelRolling;
     // Degrees the coroutine has queued for the next physics step to apply
     float barrelRollStep;
+    // Total degrees rolled so far, used to hold the camera steady through it
+    float barrelRollAngle;
+    // World direction of the dodge, fixed at launch so the ship slides in a straight line instead of corkscrewing with its own spin
+    Vector3 barrelRollLateral;
 
     // Read by the HUD throttle bar: current speed as a share of full boost
     public float ThrottleFraction { get { return Mathf.Clamp01(speed / accelerationSpeed); } }
@@ -125,6 +129,8 @@ public class SC_SpaceshipController : MonoBehaviour
     IEnumerator BarrelRoll(float direction)
     {
         barrelRolling = true;
+        // A rolls left, D rolls right, regardless of which way the hull spins
+        barrelRollLateral = -transform.right * direction;
 
         float remaining = 360f;
         float degreesPerSecond = 360f / barrelRollDuration;
@@ -140,6 +146,8 @@ public class SC_SpaceshipController : MonoBehaviour
             yield return new WaitForFixedUpdate();
         }
 
+        // A full turn is the identity rotation anyway, but clearing it keeps the camera from following
+        barrelRollAngle = 0f;
         barrelRolling = false;
     }
 
@@ -163,12 +171,32 @@ public class SC_SpaceshipController : MonoBehaviour
         Vector3 moveDirection = new Vector3(0, 0, speed);
         //Transform the vector3 to local space
         moveDirection = transform.TransformDirection(moveDirection);
+        // Eased in and out over the roll with a sine, so the dodge swells and settles instead of the ship snapping sideways and stopping dead
+        if (barrelRolling)
+        {
+            float progress = Mathf.Abs(barrelRollAngle) / 360f;
+            float peakSpeed = barrelRollDistance * Mathf.PI / (2f * barrelRollDuration);
+            moveDirection += barrelRollLateral * peakSpeed * Mathf.Sin(progress * Mathf.PI);
+        }
+
         //Set the velocity, so you can move
         r.linearVelocity = new Vector3(moveDirection.x, moveDirection.y, moveDirection.z);
 
         //Camera follow
-        mainCamera.transform.position = Vector3.Lerp(mainCamera.transform.position, cameraPosition.position, Time.deltaTime * cameraSmooth);
-        mainCamera.transform.rotation = Quaternion.Lerp(mainCamera.transform.rotation, cameraPosition.rotation, Time.deltaTime * cameraSmooth);
+        Vector3 cameraTargetPosition = cameraPosition.position;
+        Quaternion cameraTargetRotation = cameraPosition.rotation;
+
+        // keeps the camera from rolling with the ship, so the horizon stays level. The ship can still roll, but the camera will stay upright.
+        if (barrelRollAngle != 0f)
+        {
+            Quaternion cancelRoll = Quaternion.AngleAxis(-barrelRollAngle, transform.forward);
+            // The offset orbits the hull as it rolls, so cancel position too
+            cameraTargetPosition = transform.position + cancelRoll * (cameraPosition.position - transform.position);
+            cameraTargetRotation = cancelRoll * cameraTargetRotation;
+        }
+
+        mainCamera.transform.position = Vector3.Lerp(mainCamera.transform.position, cameraTargetPosition, Time.deltaTime * cameraSmooth);
+        mainCamera.transform.rotation = Quaternion.Lerp(mainCamera.transform.rotation, cameraTargetRotation, Time.deltaTime * cameraSmooth);
 
         //Rotation
         mouseXSmooth = Mathf.Lerp(mouseXSmooth, lookInput.x * rotationSpeed, Time.deltaTime * cameraSmooth);
@@ -177,6 +205,7 @@ public class SC_SpaceshipController : MonoBehaviour
         // Consume whatever the barrel roll queued since the last physics step
         float barrelRoll = barrelRollStep;
         barrelRollStep = 0f;
+        barrelRollAngle += barrelRoll;
         // Manual roll is ignored mid-roll so the two inputs cannot fight
         float roll = barrelRolling ? 0f : rollInput * rotationSpeed;
         Quaternion localRotation = Quaternion.Euler(-mouseYSmooth, mouseXSmooth, roll + barrelRoll);

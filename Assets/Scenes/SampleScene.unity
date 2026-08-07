@@ -256,11 +256,6 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
---- !u!1 &366085372 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3994093108355465738, guid: 2b929f1ebcf94d5408303a62cadfea66, type: 3}
-  m_PrefabInstance: {fileID: 5821798848267446631}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -442,53 +437,12 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4058106893071966754, guid: 2b929f1ebcf94d5408303a62cadfea66, type: 3}
   m_PrefabInstance: {fileID: 5821798848267446631}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 366085372}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3cb6d505951d72343adf44b8984d713f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SC_SpaceshipController
---- !u!95 &1012787776
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 366085372}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
---- !u!320 &1012787777
-PlayableDirector:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 366085372}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_PlayableAsset: {fileID: 11400000, guid: f1bc071d0c62ddf4f9983bd253030965, type: 2}
-  m_InitialState: 1
-  m_WrapMode: 2
-  m_DirectorUpdateMode: 1
-  m_InitialTime: 0
-  m_SceneBindings:
-  - key: {fileID: 4330601593701185298, guid: f1bc071d0c62ddf4f9983bd253030965, type: 2}
-    value: {fileID: 1012787776}
-  m_ExposedReferences:
-    m_References: []
 --- !u!224 &1872678929 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 5287053074591867403, guid: ecb6fecf81255e34db503fa588dafeb9, type: 3}
@@ -557,13 +511,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3994093108355465738, guid: 2b929f1ebcf94d5408303a62cadfea66, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1012787777}
-    - targetCorrespondingSourceObject: {fileID: 3994093108355465738, guid: 2b929f1ebcf94d5408303a62cadfea66, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1012787776}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2b929f1ebcf94d5408303a62cadfea66, type: 3}
 --- !u!1001 &7438060271423375057
 PrefabInstance:
