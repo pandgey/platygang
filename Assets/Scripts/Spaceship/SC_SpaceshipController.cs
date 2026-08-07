@@ -32,6 +32,9 @@ public class SC_SpaceshipController : MonoBehaviour
     bool accelerating;
     bool decelerating;
 
+    // Read by the HUD throttle bar: current speed as a share of full boost
+    public float ThrottleFraction { get { return Mathf.Clamp01(speed / accelerationSpeed); } }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -80,8 +83,7 @@ public class SC_SpaceshipController : MonoBehaviour
             }
         }
 
-        // Hold Shift to speed up, Ctrl to slow down. shiftKey/ctrlKey already
-        // cover both the left and right hand keys.
+        // Hold Shift to speed up, Ctrl to slow down.
         accelerating = keyboard != null && keyboard.shiftKey.isPressed;
         decelerating = keyboard != null && keyboard.ctrlKey.isPressed;
     }
