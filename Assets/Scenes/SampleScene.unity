@@ -507,15 +507,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SC_ObstacleSpawner
   ship: {fileID: 1167129872}
-  cam: {fileID: 330585545}
   asteroidPrefab: {fileID: 2621478729556189302, guid: 1e478d79d8d74a74e9785da17561ca93, type: 3}
   cometPrefab: {fileID: 2621478729556189302, guid: 1f9866e11e6b9f34a8479b2ff4d6a035, type: 3}
-  farSpawnDistance: 300
-  farSpawnSpread: 15
-  nearSpawnDistance: 50
-  nearExtraMargin: 5
+  spawnDistance: 600
+  spawnMaxAngle: 50
   aimLeadDistance: 30
   spawnInterval: 2
+  minSpawnInterval: 0.1
+  rateIncreasePercentPerSecond: 10
 --- !u!4 &913251797
 Transform:
   m_ObjectHideFlags: 0

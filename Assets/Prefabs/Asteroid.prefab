@@ -93,5 +93,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b216006d3f2b734c8c87738890ed371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpaceObstacle
+  minScale: 0.5
+  maxScale: 4
+  baseSpeed: 80
+  baseSpin: 60
   moveSpeed: 60
   spinSpeed: 20

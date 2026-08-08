@@ -3,26 +3,27 @@ using UnityEngine;
 public class SC_ObstacleSpawner : MonoBehaviour
 {
     public Transform ship;
-    public Camera cam;
     public GameObject asteroidPrefab;
     public GameObject cometPrefab;
 
-    [Header("Far spawns - visible far ahead, slowly grows")]
-    public float farSpawnDistance = 300f;
-    public float farSpawnSpread = 15f;
-
-    [Header("Near spawns - jump scare, just off screen")]
-    public float nearSpawnDistance = 50f;
-    public float nearExtraMargin = 5f;
-    public float nearSpeedMultiplier = 0.5f;
+    [Header("Spawn settings")]
+    public float spawnDistance = 600f;
+    public float spawnMaxAngle = 85f; // half angle from forward, 90 = full hemisphere in front
 
     public float aimLeadDistance = 30f;
-    public float spawnInterval = 2f;
+
+    [Header("Spawn rate ramp")]
+    public float spawnInterval = 0.1f;
+    public float minSpawnInterval = 0.001f;
+    public float rateIncreasePercentPerSecond = 5f;
 
     float timer;
 
     void Update()
     {
+        spawnInterval -= spawnInterval * (rateIncreasePercentPerSecond / 100f) * Time.deltaTime;
+        spawnInterval = Mathf.Max(spawnInterval, minSpawnInterval);
+
         timer += Time.deltaTime;
         if (timer >= spawnInterval)
         {
@@ -33,44 +34,18 @@ public class SC_ObstacleSpawner : MonoBehaviour
 
     void Spawn()
     {
-        if (Random.value < 0.5f)
-            SpawnFar();
-        else
-            SpawnNear();
+        float angle = Random.Range(0f, spawnMaxAngle);
+        float rotationAroundForward = Random.Range(0f, 360f);
+
+        Quaternion coneRotation = Quaternion.AngleAxis(rotationAroundForward, ship.forward) * Quaternion.AngleAxis(angle, ship.up);
+        Vector3 direction = coneRotation * ship.forward;
+
+        Vector3 spawnPos = ship.position + direction * spawnDistance;
+
+        SpawnObstacle(spawnPos);
     }
 
-    void SpawnFar()
-    {
-        float x = Random.Range(-farSpawnSpread, farSpawnSpread);
-        float y = Random.Range(-farSpawnSpread, farSpawnSpread);
-
-        Vector3 spawnPos = ship.position + ship.forward * farSpawnDistance
-            + ship.right * x
-            + ship.up * y;
-
-        SpawnObstacle(spawnPos, 1f);
-    }
-
-    void SpawnNear()
-    {
-        float vRadius = nearSpawnDistance * Mathf.Tan(cam.fieldOfView * 0.5f * Mathf.Deg2Rad);
-        float hRadius = vRadius * cam.aspect;
-
-        float minX = hRadius + nearExtraMargin;
-        float minY = vRadius + nearExtraMargin;
-
-        float angle = Random.Range(0f, Mathf.PI * 2f);
-        float x = Mathf.Cos(angle) * (minX + Random.Range(0f, 10f));
-        float y = Mathf.Sin(angle) * (minY + Random.Range(0f, 10f));
-
-        Vector3 spawnPos = ship.position + ship.forward * nearSpawnDistance
-            + ship.right * x
-            + ship.up * y;
-
-        SpawnObstacle(spawnPos, nearSpeedMultiplier);
-    }
-
-    void SpawnObstacle(Vector3 spawnPos, float speedMultiplier)
+    void SpawnObstacle(Vector3 spawnPos)
     {
         GameObject prefab = Random.value < 0.5f ? asteroidPrefab : cometPrefab;
         GameObject obj = Instantiate(prefab, spawnPos, Quaternion.identity);
@@ -78,11 +53,5 @@ public class SC_ObstacleSpawner : MonoBehaviour
         Vector3 aimPoint = ship.position + ship.forward * aimLeadDistance;
         Vector3 direction = (aimPoint - spawnPos).normalized;
         obj.transform.rotation = Quaternion.LookRotation(direction);
-
-        SpaceObstacle obstacle = obj.GetComponent<SpaceObstacle>();
-        if (obstacle != null)
-        {
-            obstacle.moveSpeed *= speedMultiplier;
-        }
     }
 }
