@@ -49,6 +49,11 @@ public class SC_SpaceshipController : MonoBehaviour
     // Read by the HUD throttle bar: current speed as a share of full boost
     public float ThrottleFraction { get { return Mathf.Clamp01(speed / accelerationSpeed); } }
 
+    // Read by the engine audio: which way the player is working the throttle this
+    // frame, rather than the speed it has eased to
+    public bool Accelerating { get { return accelerating; } }
+    public bool Decelerating { get { return decelerating; } }
+
     // Start is called before the first frame update
     void Start()
     {
