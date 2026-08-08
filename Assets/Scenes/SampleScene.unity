@@ -678,6 +678,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3994093108355465738, guid: 2b929f1ebcf94d5408303a62cadfea66, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5821798848267446633}
+    - targetCorrespondingSourceObject: {fileID: 3994093108355465738, guid: 2b929f1ebcf94d5408303a62cadfea66, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5821798848267446634}
   m_SourcePrefab: {fileID: 100100000, guid: 2b929f1ebcf94d5408303a62cadfea66, type: 3}
 --- !u!1 &5821798848267446632 stripped
 GameObject:
@@ -699,6 +702,20 @@ MonoBehaviour:
   maxHealth: 3
   destroyOnDeath: 1
   health: 3
+--- !u!114 &5821798848267446634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5821798848267446632}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2fab6d0ac9ea04147b342e11a6db3efe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CollisionDamage
+  safeSpeed: 8
+  damagePerUnit: 1
 --- !u!1001 &7438060271423375057
 PrefabInstance:
   m_ObjectHideFlags: 0
