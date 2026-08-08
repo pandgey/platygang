@@ -171,7 +171,7 @@ PrefabInstance:
     - target: {fileID: 1671781911319727253, guid: ecb6fecf81255e34db503fa588dafeb9, type: 3}
       propertyPath: ship
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 945056629}
     - target: {fileID: 5287053074591867403, guid: ecb6fecf81255e34db503fa588dafeb9, type: 3}
       propertyPath: m_SizeDelta.x
       value: 20
@@ -1006,7 +1006,7 @@ PrefabInstance:
     - target: {fileID: 5328651540514733506, guid: f4d9138e5ffcfdd4db49bf73a8811e9d, type: 3}
       propertyPath: shipController
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 945056629}
     - target: {fileID: 5328651540514733506, guid: f4d9138e5ffcfdd4db49bf73a8811e9d, type: 3}
       propertyPath: blackHoleEncounter
       value: 
@@ -1255,7 +1255,7 @@ PrefabInstance:
     - target: {fileID: 4375182761532763370, guid: 3c4462b525d311e41b6bf8867c61cc32, type: 3}
       propertyPath: shipController
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 945056629}
     - target: {fileID: 4375182761532763370, guid: 3c4462b525d311e41b6bf8867c61cc32, type: 3}
       propertyPath: drawingImageObject
       value: 
