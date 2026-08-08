@@ -2,9 +2,10 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+// Inverted variant of SC_SpaceshipController
 [RequireComponent(typeof(Rigidbody))]
 
-public class SC_SpaceshipController : SC_SpaceshipControllerBase
+public class SC_SpaceshipControllerInverted : SC_SpaceshipControllerBase
 {
     public float normalSpeed = 25f;
     public float accelerationSpeed = 45f;
@@ -21,6 +22,12 @@ public class SC_SpaceshipController : SC_SpaceshipControllerBase
     public float doubleTapWindow = 0.3f;
     // How far sideways the dodge carries the ship, in world units
     public float barrelRollDistance = 8f;
+
+    // Which axes the inversion applies to, so the scheme can be dialled back to
+    // the usual pitch-only inversion without touching the code
+    public bool invertPitch = true;
+    public bool invertYaw = true;
+    public bool invertRoll = true;
 
     float speed;
     Rigidbody r;
@@ -58,7 +65,7 @@ public class SC_SpaceshipController : SC_SpaceshipControllerBase
 
         if (mainCamera == null)
         {
-            Debug.LogError("SC_SpaceshipController found no camera. Assign Main Camera, or tag a camera in the scene as MainCamera.", this);
+            Debug.LogError("SC_SpaceshipControllerInverted found no camera. Assign Main Camera, or tag a camera in the scene as MainCamera.", this);
             enabled = false;
             return;
         }
@@ -85,10 +92,24 @@ public class SC_SpaceshipController : SC_SpaceshipControllerBase
             lookRate = mouse.delta.ReadValue() * mouseSensitivity / deltaTime;
         }
 
+        // The inversion, applied to the raw rate before smoothing so the easing is unaffected
+        if (invertYaw)
+        {
+            lookRate.x = -lookRate.x;
+        }
+
+        if (invertPitch)
+        {
+            lookRate.y = -lookRate.y;
+        }
+
         // Smoothed on the frame clock, where the input actually arrives. Exponential form so the quarter second of easing holds at any frame rate.
         float smooth = 1f - Mathf.Exp(-cameraSmooth * deltaTime);
         yawSpeed = Mathf.Lerp(yawSpeed, lookRate.x * rotationSpeed, smooth);
         pitchSpeed = Mathf.Lerp(pitchSpeed, lookRate.y * rotationSpeed, smooth);
+
+        // Flips which way each key rolls, and with it which way a double tap dodges
+        float leftKeyDirection = invertRoll ? -1f : 1f;
 
         Keyboard keyboard = Keyboard.current;
         if (keyboard != null)
@@ -96,22 +117,22 @@ public class SC_SpaceshipController : SC_SpaceshipControllerBase
             rollInput = 0;
             if (keyboard.aKey.isPressed)
             {
-                rollInput = 1;
+                rollInput = leftKeyDirection;
             }
             else if (keyboard.dKey.isPressed)
             {
-                rollInput = -1;
+                rollInput = -leftKeyDirection;
             }
 
             // Same keys as manual roll, so a quick double tap snaps the ship
             if (keyboard.aKey.wasPressedThisFrame)
             {
-                TryBarrelRoll(ref lastLeftTapTime, 1f);
+                TryBarrelRoll(ref lastLeftTapTime, leftKeyDirection);
             }
 
             if (keyboard.dKey.wasPressedThisFrame)
             {
-                TryBarrelRoll(ref lastRightTapTime, -1f);
+                TryBarrelRoll(ref lastRightTapTime, -leftKeyDirection);
             }
         }
 
@@ -136,7 +157,7 @@ public class SC_SpaceshipController : SC_SpaceshipControllerBase
     IEnumerator BarrelRoll(float direction)
     {
         barrelRolling = true;
-        // A rolls left, D rolls right, regardless of which way the hull spins
+        // The dodge always follows the roll, so an inverted roll dodges the other way too
         barrelRollLateral = -transform.right * direction;
 
         float remaining = 360f;
