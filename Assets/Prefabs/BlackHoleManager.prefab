@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &5865688930113476457
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7603182860959307044}
+  - component: {fileID: 4375182761532763370}
+  m_Layer: 0
+  m_Name: BlackHoleManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7603182860959307044
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5865688930113476457}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 466.20282, y: 265.8983, z: -626.6732}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4375182761532763370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5865688930113476457}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f64c2ceabb08e94bb2f4c6418a0e1c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BlackHoleEncounter
+  ship: {fileID: 0}
+  shipController: {fileID: 0}
+  shipHealth: {fileID: 0}
+  shipRigidbody: {fileID: 0}
+  mainCamera: {fileID: 0}
+  blackHolePrefab: {fileID: 8006868825615935993, guid: 48399e95aef27d443acb3336c499be70, type: 3}
+  mashPromptUI: {fileID: 0}
+  mashPromptText: {fileID: 0}
+  escapeBar: {fileID: 0}
+  blackFadeCanvasGroup: {fileID: 0}
+  drawingImageObject: {fileID: 0}
+  sideDistance: 250
+  forwardDistance: 200
+  fadeInDuration: 1
+  barDecayPerSecond: 12
+  barGainPerPress: 6
+  timeLimit: 6
+  finalBarDecayPerSecond: 12
+  finalBarGainPerPress: 1
+  finalTimeLimit: 10
+  cameraZoomDuration: 2
+  blackFadeDuration: 0.1
+  drawingDisplayDuration: 3
+  nextSceneName: AlienGalaxy
+  slowMoTimeScale: 0.15
+  pullSpeed: 10
+  finalPullSpeed: 6
+  overshootDistance: 5
+  bounceDuration: 2
