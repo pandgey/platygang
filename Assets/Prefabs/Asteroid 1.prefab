@@ -85,6 +85,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -6689036041284674117, guid: 832b95c3503927742a316d298d79771d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 5968701531542378858}
+    - targetCorrespondingSourceObject: {fileID: -6689036041284674117, guid: 832b95c3503927742a316d298d79771d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 764997961035163350}
   m_SourcePrefab: {fileID: -5645937942226959685, guid: 832b95c3503927742a316d298d79771d, type: 3}
 --- !u!1 &1886457657689231782 stripped
 GameObject:
@@ -158,3 +161,16 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &764997961035163350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1886457657689231782}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de25c2d91de79904bbcfa7090af5f1e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObstacleImpact
+  explosionPrefab: {fileID: 9111320563476075686, guid: df30ace5a50e58a4686891f8f01c36ab, type: 3}
