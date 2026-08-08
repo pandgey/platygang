@@ -14,15 +14,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2774220344278030320, guid: 832b95c3503927742a316d298d79771d, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.25
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2774220344278030320, guid: 832b95c3503927742a316d298d79771d, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.25
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2774220344278030320, guid: 832b95c3503927742a316d298d79771d, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.25
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2774220344278030320, guid: 832b95c3503927742a316d298d79771d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -93,5 +93,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b216006d3f2b734c8c87738890ed371, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpaceObstacle
-  moveSpeed: 20
+  moveSpeed: 90
   spinSpeed: 60
