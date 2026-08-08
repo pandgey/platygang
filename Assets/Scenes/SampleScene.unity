@@ -538,8 +538,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SC_ObstacleSpawner
   ship: {fileID: 3338680433772730515}
-  asteroidPrefab: {fileID: 2621478729556189302, guid: 1e478d79d8d74a74e9785da17561ca93, type: 3}
-  cometPrefab: {fileID: 2621478729556189302, guid: 1f9866e11e6b9f34a8479b2ff4d6a035, type: 3}
+  asteroidPrefab: {fileID: 1886457657689231782, guid: 786d420e4f631cd4eb081dd50a9b5d45, type: 3}
+  cometPrefab: {fileID: 6216005150805102980, guid: 96c15d59aa262e446b6eda848b23dba0, type: 3}
   spawnDistance: 600
   spawnMaxAngle: 50
   aimLeadDistance: 30
@@ -778,6 +778,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3184623216002952834, guid: d5d3029387f398541ae57eabe2ea6c90, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: fddd999c885101a42ac299603f048b49, type: 2}
     - target: {fileID: 3977506957744328535, guid: d5d3029387f398541ae57eabe2ea6c90, type: 3}
       propertyPath: m_Name
       value: spaceship_FINAL
