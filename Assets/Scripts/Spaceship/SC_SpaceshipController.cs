@@ -26,12 +26,11 @@ public class SC_SpaceshipController : MonoBehaviour
     Rigidbody r;
     Quaternion lookRotation;
     float rotationZ = 0;
-    float mouseXSmooth = 0;
-    float mouseYSmooth = 0;
+    // Smoothed mouse look, in degrees per second. Kept as a rate rather than as degrees per physics step, so a step that happens to see two frames of mouse movement, or none, does not pulse the turn rate.
+    float yawSpeed;
+    float pitchSpeed;
     Vector3 defaultShipRotation;
 
-    // Input is sampled per frame in Update and consumed in FixedUpdate, which may run zero or several times per frame. Reading it straight from FixedUpdate drops and double-counts mouse movement.
-    Vector2 lookInput;
     float rollInput;
     bool accelerating;
     bool decelerating;
@@ -76,12 +75,20 @@ public class SC_SpaceshipController : MonoBehaviour
 
     void Update()
     {
+        float deltaTime = Time.deltaTime;
+
         Mouse mouse = Mouse.current;
-        if (mouse != null)
+        Vector2 lookRate = Vector2.zero;
+        if (mouse != null && deltaTime > 0f)
         {
-            // Accumulate, so no movement is lost on frames without a physics step
-            lookInput += mouse.delta.ReadValue() * mouseSensitivity;
+            // Per second, so the same flick of the mouse turns the ship equally far whatever the frame rate
+            lookRate = mouse.delta.ReadValue() * mouseSensitivity / deltaTime;
         }
+
+        // Smoothed on the frame clock, where the input actually arrives. Exponential form so the quarter second of easing holds at any frame rate.
+        float smooth = 1f - Mathf.Exp(-cameraSmooth * deltaTime);
+        yawSpeed = Mathf.Lerp(yawSpeed, lookRate.x * rotationSpeed, smooth);
+        pitchSpeed = Mathf.Lerp(pitchSpeed, lookRate.y * rotationSpeed, smooth);
 
         Keyboard keyboard = Keyboard.current;
         if (keyboard != null)
@@ -153,18 +160,20 @@ public class SC_SpaceshipController : MonoBehaviour
 
     void FixedUpdate()
     {
+        float deltaTime = Time.fixedDeltaTime;
+
         // Accelerating wins if the player somehow holds Shift and Ctrl together
         if (accelerating)
         {
-            speed = Mathf.Lerp(speed, accelerationSpeed, Time.deltaTime * 3);
+            speed = Mathf.Lerp(speed, accelerationSpeed, deltaTime * 3);
         }
         else if (decelerating)
         {
-            speed = Mathf.Lerp(speed, decelerationSpeed, Time.deltaTime * 3);
+            speed = Mathf.Lerp(speed, decelerationSpeed, deltaTime * 3);
         }
         else
         {
-            speed = Mathf.Lerp(speed, normalSpeed, Time.deltaTime * 10);
+            speed = Mathf.Lerp(speed, normalSpeed, deltaTime * 10);
         }
 
         //Set moveDirection to the vertical axis (up and down keys) * speed
@@ -182,6 +191,33 @@ public class SC_SpaceshipController : MonoBehaviour
         //Set the velocity, so you can move
         r.linearVelocity = new Vector3(moveDirection.x, moveDirection.y, moveDirection.z);
 
+        //Rotation
+        // Consume whatever the barrel roll queued using the last physics step
+        float barrelRoll = barrelRollStep;
+        barrelRollStep = 0f;
+        barrelRollAngle += barrelRoll;
+        // Manual roll is ignored mid-roll so the two inputs cannot fight
+        float roll = barrelRolling ? 0f : rollInput * rotationSpeed;
+        Quaternion localRotation = Quaternion.Euler(-pitchSpeed * deltaTime, yawSpeed * deltaTime, roll + barrelRoll);
+        lookRotation = lookRotation * localRotation;
+        // A bump leaves the body spinning, and angular damping barely bleeds it off. Left alone it turns the hull between the steps this script authors, and the ship shakes for seconds after every collision.
+        r.angularVelocity = Vector3.zero;
+        // MoveRotation, not transform.rotation: writing the transform of an interpolated Rigidbody teleports it and throws away the interpolation, so the hull snaps once per physics step while the camera moves every frame
+        r.MoveRotation(lookRotation);
+    }
+
+    // Camera and cosmetics run on the frame clock, not the physics clock. The Rigidbody interpolates the hull between physics steps, so anything that follows it has to be sampled per frame or it lags the ship by a varying fraction of a step, which is what makes the ship wobble in view.
+    void LateUpdate()
+    {
+        float deltaTime = Time.deltaTime;
+        float smooth = 1f - Mathf.Exp(-cameraSmooth * deltaTime);
+
+        //Bank the hull into the turn
+        rotationZ -= yawSpeed * deltaTime;
+        rotationZ = Mathf.Clamp(rotationZ, -45, 45);
+        spaceshipRoot.transform.localEulerAngles = new Vector3(defaultShipRotation.x, defaultShipRotation.y, rotationZ);
+        rotationZ = Mathf.Lerp(rotationZ, defaultShipRotation.z, smooth);
+
         //Camera follow
         Vector3 cameraTargetPosition = cameraPosition.position;
         Quaternion cameraTargetRotation = cameraPosition.rotation;
@@ -195,26 +231,8 @@ public class SC_SpaceshipController : MonoBehaviour
             cameraTargetRotation = cancelRoll * cameraTargetRotation;
         }
 
-        mainCamera.transform.position = Vector3.Lerp(mainCamera.transform.position, cameraTargetPosition, Time.deltaTime * cameraSmooth);
-        mainCamera.transform.rotation = Quaternion.Lerp(mainCamera.transform.rotation, cameraTargetRotation, Time.deltaTime * cameraSmooth);
-
-        //Rotation
-        mouseXSmooth = Mathf.Lerp(mouseXSmooth, lookInput.x * rotationSpeed, Time.deltaTime * cameraSmooth);
-        mouseYSmooth = Mathf.Lerp(mouseYSmooth, lookInput.y * rotationSpeed, Time.deltaTime * cameraSmooth);
-        lookInput = Vector2.zero;
-        // Consume whatever the barrel roll queued since the last physics step
-        float barrelRoll = barrelRollStep;
-        barrelRollStep = 0f;
-        barrelRollAngle += barrelRoll;
-        // Manual roll is ignored mid-roll so the two inputs cannot fight
-        float roll = barrelRolling ? 0f : rollInput * rotationSpeed;
-        Quaternion localRotation = Quaternion.Euler(-mouseYSmooth, mouseXSmooth, roll + barrelRoll);
-        lookRotation = lookRotation * localRotation;
-        transform.rotation = lookRotation;
-        rotationZ -= mouseXSmooth;
-        rotationZ = Mathf.Clamp(rotationZ, -45, 45);
-        spaceshipRoot.transform.localEulerAngles = new Vector3(defaultShipRotation.x, defaultShipRotation.y, rotationZ);
-        rotationZ = Mathf.Lerp(rotationZ, defaultShipRotation.z, Time.deltaTime * cameraSmooth);
+        mainCamera.transform.position = Vector3.Lerp(mainCamera.transform.position, cameraTargetPosition, smooth);
+        mainCamera.transform.rotation = Quaternion.Lerp(mainCamera.transform.rotation, cameraTargetRotation, smooth);
 
         //Update crosshair texture
         if (crosshairTexture)
