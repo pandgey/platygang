@@ -9,7 +9,7 @@ public class BlackHoleEncounter : MonoBehaviour
 {
     [Header("References")]
     public Transform ship;
-    public SC_SpaceshipController shipController;
+    public SC_SpaceshipControllerBase shipController;
     public Health shipHealth;
     public Rigidbody shipRigidbody;
     public Camera mainCamera;

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class FuelSystem : MonoBehaviour
 {
     public float timeToEmpty = 300f;
-    public SC_SpaceshipController shipController;
+    public SC_SpaceshipControllerBase shipController;
     public Slider fuelBar;
     public BlackHoleEncounter blackHoleEncounter;
 

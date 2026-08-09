@@ -5,7 +5,8 @@ using UnityEngine;
 // the percentage readout beside it.
 public class SC_SpaceshipThrottleBar : MonoBehaviour
 {
-    public SC_SpaceshipController ship;
+    // Either control scheme, normal or inverted
+    public SC_SpaceshipControllerBase ship;
     // Anchored to the bottom of its track, so growing its height fills upward
     public RectTransform fill;
     public TMP_Text label;
@@ -16,7 +17,7 @@ public class SC_SpaceshipThrottleBar : MonoBehaviour
     {
         if (ship == null)
         {
-            ship = GetComponentInParent<SC_SpaceshipController>();
+            ship = GetComponentInParent<SC_SpaceshipControllerBase>();
         }
 
         if (ship == null || fill == null || label == null)

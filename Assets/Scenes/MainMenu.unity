@@ -1689,6 +1689,9 @@ MonoBehaviour:
   frameA: {fileID: 21300000, guid: 8c82f1ddafef20a4081c264be29c985e, type: 3}
   frameB: {fileID: 21300000, guid: 8c82f1ddafef20a4081c264be29c985e, type: 3}
   switchInterval: 0.5
+  image: {fileID: 0}
+  timer: 0
+  showingA: 1
 --- !u!114 &1410234483
 MonoBehaviour:
   m_ObjectHideFlags: 0
