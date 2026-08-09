@@ -7,6 +7,7 @@ public class FuelSystem : MonoBehaviour
     public SC_SpaceshipController shipController;
     public Slider fuelBar;
     public BlackHoleEncounter blackHoleEncounter;
+    public GameOverController gameOverController;
 
     [Header("Throttle scaling")]
     public float minDrainMultiplier = 0.5f;
@@ -24,6 +25,7 @@ public class FuelSystem : MonoBehaviour
     float fuel = 100f;
     bool firstBlackHoleTriggered = false;
     bool finalBlackHoleTriggered = false;
+    bool fuelEmptyTriggered = false;
     float nextRepeatThreshold;
 
     public float CurrentFuel { get { return fuel; } }
@@ -55,6 +57,13 @@ public class FuelSystem : MonoBehaviour
         fuel -= baseDrainPerSecond * drainMultiplier * Time.deltaTime;
         fuel = Mathf.Max(fuel, 0f);
         fuelBar.value = fuel;
+
+        if (!fuelEmptyTriggered && fuel <= 0f)
+        {
+            fuelEmptyTriggered = true;
+            gameOverController.TriggerGameOver(false);
+            return;
+        }
 
         if (useOneOffThresholds)
         {

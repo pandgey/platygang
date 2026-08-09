@@ -872,6 +872,7 @@ MonoBehaviour:
   shipController: {fileID: 3338680433772730519}
   fuelBar: {fileID: 283657836}
   blackHoleEncounter: {fileID: 693130020}
+  gameOverController: {fileID: 3338680433772730521}
   minDrainMultiplier: 0.5
   maxDrainMultiplier: 2
   useOneOffThresholds: 1

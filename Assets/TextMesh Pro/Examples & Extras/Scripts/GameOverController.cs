@@ -17,15 +17,13 @@ public class GameOverController : MonoBehaviour
     SC_SpaceshipController shipController;
     Renderer[] shipRenderers;
     bool waitingForInput = false;
+    bool isGameOver = false;
 
     void Awake()
     {
         health = GetComponent<Health>();
         rb = GetComponent<Rigidbody>();
         shipController = GetComponent<SC_SpaceshipController>();
-        // grabs the visible mesh renderers under this object without needing
-        // a manually assigned reference, so it can't accidentally target the
-        // root object this script lives on
         shipRenderers = GetComponentsInChildren<Renderer>();
     }
 
@@ -41,18 +39,29 @@ public class GameOverController : MonoBehaviour
 
     void HandleDeath()
     {
-        if (explosionPrefab != null)
-        {
-            Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-        }
-        else
-        {
-            Debug.LogWarning("GameOverController: Explosion Prefab is not assigned in the Inspector.", this);
-        }
+        TriggerGameOver(true);
+    }
 
-        foreach (Renderer r in shipRenderers)
+    // Call this for non-damage game overs, e.g. running out of fuel - same sequence, no explosion
+    public void TriggerGameOver(bool spawnExplosion)
+    {
+        if (isGameOver)
         {
-            r.enabled = false;
+            return;
+        }
+        isGameOver = true;
+
+        if (spawnExplosion)
+        {
+            if (explosionPrefab != null)
+            {
+                Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+            }
+
+            foreach (Renderer r in shipRenderers)
+            {
+                r.enabled = false;
+            }
         }
 
         shipController.enabled = false;
