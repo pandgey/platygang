@@ -1024,7 +1024,7 @@ MonoBehaviour:
   pullSpeed: 10
   finalPullSpeed: 6
   overshootDistance: 5
-  bounceDuration: 0.5
+  bounceDuration: 0.1
 --- !u!4 &693130021
 Transform:
   m_ObjectHideFlags: 0
