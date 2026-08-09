@@ -23,6 +23,11 @@ public class Health : MonoBehaviour
         health = maxHealth;
     }
 
+    public void SetHealth(float value)
+    {
+        health = Mathf.Clamp(value, 0f, maxHealth);
+    }
+
     public void TakeDamage(float amount)
     {
         if (IsDead || amount <= 0f)

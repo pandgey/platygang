@@ -749,6 +749,7 @@ MonoBehaviour:
   shipRigidbody: {fileID: 784600043}
   mainCamera: {fileID: 1155073830}
   blackHolePrefab: {fileID: 8006868825615935993, guid: 48399e95aef27d443acb3336c499be70, type: 3}
+  fuelSystem: {fileID: 44670193}
   mashPromptUI: {fileID: 292523088}
   mashPromptText: {fileID: 869106340}
   escapeBar: {fileID: 1477339856}
@@ -1325,6 +1326,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 3977506957744328535, guid: d5d3029387f398541ae57eabe2ea6c90, type: 3}
       insertIndex: -1
       addedObject: {fileID: 784600045}
+    - targetCorrespondingSourceObject: {fileID: 3977506957744328535, guid: d5d3029387f398541ae57eabe2ea6c90, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 784600049}
   m_SourcePrefab: {fileID: 100100000, guid: d5d3029387f398541ae57eabe2ea6c90, type: 3}
 --- !u!4 &784600041 stripped
 Transform:
@@ -1457,6 +1461,18 @@ MonoBehaviour:
   doubleTapWindow: 0.3
   barrelRollDistance: 8
   invertedControls: 1
+--- !u!114 &784600049
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 784600042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4ae4e158ea9ba547bcf7299b7419613, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStateCarrier
 --- !u!1 &869106337
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,13 +11,14 @@ public class FuelSystem : MonoBehaviour
     [Header("Throttle scaling")]
     public float minDrainMultiplier = 0.5f;
     public float maxDrainMultiplier = 2f;
-
+    public float CurrentFuel { get { return fuel; } }
     float fuel = 100f;
     bool firstBlackHoleTriggered = false;
     bool finalBlackHoleTriggered = false;
 
     void Start()
     {
+        fuel = GameState.carriedFuel;
         fuelBar.maxValue = 100f;
         fuelBar.value = fuel;
     }

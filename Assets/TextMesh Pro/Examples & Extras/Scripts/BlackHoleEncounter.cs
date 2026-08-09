@@ -14,7 +14,7 @@ public class BlackHoleEncounter : MonoBehaviour
     public Rigidbody shipRigidbody;
     public Camera mainCamera;
     public GameObject blackHolePrefab;
-
+    public FuelSystem fuelSystem;
     [Header("UI")]
     public GameObject mashPromptUI;
     public TMP_Text mashPromptText;
@@ -283,6 +283,8 @@ public class BlackHoleEncounter : MonoBehaviour
         drawingImageObject.SetActive(true);
 
         yield return new WaitForSeconds(drawingDisplayDuration);
+        GameState.carriedFuel = fuelSystem.CurrentFuel;
+        GameState.carriedHealth = shipHealth.currentHealth;
 
         SceneManager.LoadScene(nextSceneName);
     }
