@@ -868,7 +868,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1227e2cf992cae43bc25f10a9bb048a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FuelSystem
-  timeToEmpty: 100
+  timeToEmpty: 200
   shipController: {fileID: 3338680433772730519}
   fuelBar: {fileID: 283657836}
   blackHoleEncounter: {fileID: 693130020}
@@ -2787,13 +2787,13 @@ PrefabInstance:
       addedObject: {fileID: 283657835}
     - targetCorrespondingSourceObject: {fileID: 6979049802005796437, guid: ecb6fecf81255e34db503fa588dafeb9, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 1257926333}
+    - targetCorrespondingSourceObject: {fileID: 6979049802005796437, guid: ecb6fecf81255e34db503fa588dafeb9, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 2025239711}
     - targetCorrespondingSourceObject: {fileID: 6979049802005796437, guid: ecb6fecf81255e34db503fa588dafeb9, type: 3}
       insertIndex: -1
       addedObject: {fileID: 192466087}
-    - targetCorrespondingSourceObject: {fileID: 6979049802005796437, guid: ecb6fecf81255e34db503fa588dafeb9, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1257926333}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ecb6fecf81255e34db503fa588dafeb9, type: 3}
 --- !u!224 &7438060271423375058 stripped
