@@ -3,26 +3,38 @@ using UnityEngine;
 public class SpaceObstacle : MonoBehaviour
 {
     public float minScale = 0.5f;
-    public float maxScale = 8f;
+    public float maxScale = 15f;
 
-    public float baseSpeed = 55f;
-    public float baseSpin = 80f;  
+    public float baseSpeed = 35f;
+    public float baseSpin = 80f;
 
     public float moveSpeed;
     public float spinSpeed;
 
-    private Vector3 direction;
+    Vector3 direction;
+    bool initialized = false;
 
     void Start()
     {
-        direction = transform.forward;
+        if (!initialized)
+        {
+            // fallback if this obstacle wasn't spawned through the spawner
+            Initialize(transform.forward, 1f);
+        }
+    }
+
+    public void Initialize(Vector3 travelDirection, float speedMultiplier)
+    {
+        direction = travelDirection.normalized;
 
         float scale = Random.Range(minScale, maxScale);
         transform.localScale = Vector3.one * scale;
 
         float scaleFactor = Mathf.Sqrt(scale);
-        moveSpeed = baseSpeed / scaleFactor;
-        spinSpeed = baseSpin / scaleFactor;
+        moveSpeed = (baseSpeed / scaleFactor) * speedMultiplier;
+        spinSpeed = (baseSpin / scaleFactor) * speedMultiplier;
+
+        initialized = true;
     }
 
     void Update()

@@ -9,6 +9,18 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 06d8edb672e2d394ab8c4ab0e6ae7de9, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 600
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 06d8edb672e2d394ab8c4ab0e6ae7de9, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 600
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 06d8edb672e2d394ab8c4ab0e6ae7de9, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 600
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 06d8edb672e2d394ab8c4ab0e6ae7de9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 919.38855
       objectReference: {fileID: 0}
@@ -48,6 +60,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 06d8edb672e2d394ab8c4ab0e6ae7de9, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: -7918335002988649766, guid: 06d8edb672e2d394ab8c4ab0e6ae7de9, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -59,5 +75,31 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 06d8edb672e2d394ab8c4ab0e6ae7de9, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -4236292314983773514}
   m_SourcePrefab: {fileID: 100100000, guid: 06d8edb672e2d394ab8c4ab0e6ae7de9, type: 3}
+--- !u!1 &1063956427997994550 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 06d8edb672e2d394ab8c4ab0e6ae7de9, type: 3}
+  m_PrefabInstance: {fileID: 144827027757556583}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &-4236292314983773514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1063956427997994550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b216006d3f2b734c8c87738890ed371, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpaceObstacle
+  minScale: 50
+  maxScale: 100
+  baseSpeed: 100
+  baseSpin: 80
+  moveSpeed: 0
+  spinSpeed: 0

@@ -10,6 +10,7 @@ public class SC_ObstacleSpawner : MonoBehaviour
     public float spawnMaxAngle = 85f;
 
     public float aimLeadDistance = 30f;
+    public float speedMultiplier = 1f;
 
     [Header("Spawn rate ramp")]
     public float spawnInterval = 2f;
@@ -37,9 +38,9 @@ public class SC_ObstacleSpawner : MonoBehaviour
         float rotationAroundForward = Random.Range(0f, 360f);
 
         Quaternion coneRotation = Quaternion.AngleAxis(rotationAroundForward, ship.forward) * Quaternion.AngleAxis(angle, ship.up);
-        Vector3 direction = coneRotation * ship.forward;
+        Vector3 dirFromShip = coneRotation * ship.forward;
 
-        Vector3 spawnPos = ship.position + direction * spawnDistance;
+        Vector3 spawnPos = ship.position + dirFromShip * spawnDistance;
 
         SpawnObstacle(spawnPos);
     }
@@ -47,10 +48,16 @@ public class SC_ObstacleSpawner : MonoBehaviour
     void SpawnObstacle(Vector3 spawnPos)
     {
         GameObject prefab = obstaclePrefabs[Random.Range(0, obstaclePrefabs.Length)];
-        GameObject obj = Instantiate(prefab, spawnPos, Quaternion.identity);
+        // random orientation purely for visual variety, unrelated to travel direction now
+        GameObject obj = Instantiate(prefab, spawnPos, Random.rotation);
 
         Vector3 aimPoint = ship.position + ship.forward * aimLeadDistance;
-        Vector3 direction = (aimPoint - spawnPos).normalized;
-        obj.transform.rotation = Quaternion.LookRotation(direction);
+        Vector3 travelDirection = (aimPoint - spawnPos).normalized;
+
+        SpaceObstacle obstacle = obj.GetComponent<SpaceObstacle>();
+        if (obstacle != null)
+        {
+            obstacle.Initialize(travelDirection, speedMultiplier);
+        }
     }
 }
