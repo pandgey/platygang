@@ -154,6 +154,11 @@ MonoBehaviour:
   blackHoleEncounter: {fileID: 472181939}
   minDrainMultiplier: 0.5
   maxDrainMultiplier: 2
+  useOneOffThresholds: 0
+  firstBlackHoleAt: 87.5
+  finalBlackHoleAt: 75
+  useRepeatingThresholds: 1
+  repeatIntervalPercent: 25
 --- !u!4 &44670194
 Transform:
   m_ObjectHideFlags: 0
