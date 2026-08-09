@@ -21,6 +21,7 @@ public class SC_SpaceshipController : MonoBehaviour
     public float doubleTapWindow = 0.3f;
     // How far sideways the dodge carries the ship, in world units
     public float barrelRollDistance = 8f;
+    public bool invertedControls = false;
 
     float speed;
     Rigidbody r;
@@ -81,14 +82,14 @@ public class SC_SpaceshipController : MonoBehaviour
         Vector2 lookRate = Vector2.zero;
         if (mouse != null && deltaTime > 0f)
         {
-            // Per second, so the same flick of the mouse turns the ship equally far whatever the frame rate
             lookRate = mouse.delta.ReadValue() * mouseSensitivity / deltaTime;
         }
 
-        // Smoothed on the frame clock, where the input actually arrives. Exponential form so the quarter second of easing holds at any frame rate.
+        float invertFactor = invertedControls ? -1f : 1f;
+
         float smooth = 1f - Mathf.Exp(-cameraSmooth * deltaTime);
-        yawSpeed = Mathf.Lerp(yawSpeed, lookRate.x * rotationSpeed, smooth);
-        pitchSpeed = Mathf.Lerp(pitchSpeed, lookRate.y * rotationSpeed, smooth);
+        yawSpeed = Mathf.Lerp(yawSpeed, lookRate.x * rotationSpeed * invertFactor, smooth);
+        pitchSpeed = Mathf.Lerp(pitchSpeed, lookRate.y * rotationSpeed * invertFactor, smooth);
 
         Keyboard keyboard = Keyboard.current;
         if (keyboard != null)
@@ -96,26 +97,24 @@ public class SC_SpaceshipController : MonoBehaviour
             rollInput = 0;
             if (keyboard.aKey.isPressed)
             {
-                rollInput = 1;
+                rollInput = invertFactor;
             }
             else if (keyboard.dKey.isPressed)
             {
-                rollInput = -1;
+                rollInput = -invertFactor;
             }
 
-            // Same keys as manual roll, so a quick double tap snaps the ship
             if (keyboard.aKey.wasPressedThisFrame)
             {
-                TryBarrelRoll(ref lastLeftTapTime, 1f);
+                TryBarrelRoll(ref lastLeftTapTime, invertFactor);
             }
 
             if (keyboard.dKey.wasPressedThisFrame)
             {
-                TryBarrelRoll(ref lastRightTapTime, -1f);
+                TryBarrelRoll(ref lastRightTapTime, -invertFactor);
             }
         }
 
-        // Hold Shift to speed up, Ctrl to slow down.
         accelerating = keyboard != null && keyboard.shiftKey.isPressed;
         decelerating = keyboard != null && keyboard.ctrlKey.isPressed;
     }
