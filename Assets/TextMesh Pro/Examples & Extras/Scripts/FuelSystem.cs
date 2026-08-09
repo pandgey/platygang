@@ -3,17 +3,18 @@ using UnityEngine.UI;
 
 public class FuelSystem : MonoBehaviour
 {
-    public float timeToEmpty = 300f; // seconds for fuel to go from 100% to 0% at normal throttle
+    public float timeToEmpty = 300f;
     public SC_SpaceshipController shipController;
     public Slider fuelBar;
     public BlackHoleEncounter blackHoleEncounter;
 
     [Header("Throttle scaling")]
-    public float minDrainMultiplier = 0.5f; // fuel use when decelerating/idle
-    public float maxDrainMultiplier = 2f;   // fuel use at full boost
+    public float minDrainMultiplier = 0.5f;
+    public float maxDrainMultiplier = 2f;
 
     float fuel = 100f;
-    bool blackHoleTriggered = false;
+    bool firstBlackHoleTriggered = false;
+    bool finalBlackHoleTriggered = false;
 
     void Start()
     {
@@ -35,10 +36,16 @@ public class FuelSystem : MonoBehaviour
         fuel = Mathf.Max(fuel, 0f);
         fuelBar.value = fuel;
 
-        if (!blackHoleTriggered && fuel <= 87.5f)
+        if (!firstBlackHoleTriggered && fuel <= 87.5f)
         {
-            blackHoleTriggered = true;
+            firstBlackHoleTriggered = true;
             blackHoleEncounter.TriggerBlackHole();
+        }
+
+        if (!finalBlackHoleTriggered && fuel <= 75f)
+        {
+            finalBlackHoleTriggered = true;
+            blackHoleEncounter.TriggerFinalBlackHole();
         }
     }
 }
