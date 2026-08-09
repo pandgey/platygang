@@ -175,6 +175,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &168254078 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7290556695483580765, guid: d545e0bfc724998439a9ce0a0df82e19, type: 3}
+  m_PrefabInstance: {fileID: 5157162792717443099}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &170906564
 GameObject:
   m_ObjectHideFlags: 0
@@ -1878,6 +1883,11 @@ MonoBehaviour:
   pipSpacing: 5
   filledPipOriginX: 17
   emptyPipOriginX: 32
+--- !u!4 &1078728575 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4491122083503731514, guid: d545e0bfc724998439a9ce0a0df82e19, type: 3}
+  m_PrefabInstance: {fileID: 5157162792717443099}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1132249084
 GameObject:
   m_ObjectHideFlags: 0
@@ -2178,6 +2188,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1186738612}
   m_CullTransparentMesh: 1
+--- !u!4 &1191665957 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2386789515482099730, guid: d545e0bfc724998439a9ce0a0df82e19, type: 3}
+  m_PrefabInstance: {fileID: 5157162792717443099}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1295098913
 GameObject:
   m_ObjectHideFlags: 0
@@ -2718,7 +2733,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1819870134
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2994,10 +3009,28 @@ BoxCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1988358852
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1988358847}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd6173323f860114e8b27245ad386977, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlanetRotator
+  planetBody: {fileID: 168254078}
+  ringOne: {fileID: 1191665957}
+  ringTwo: {fileID: 1078728575}
+  planetRotationSpeed: 5
+  ringOneRotationSpeed: 2
+  ringTwoRotationSpeed: 3
 --- !u!1001 &5157162792717443099
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3024,15 +3057,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6634188815237647400, guid: d545e0bfc724998439a9ce0a0df82e19, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1076.8428
+      value: 429
       objectReference: {fileID: 0}
     - target: {fileID: 6634188815237647400, guid: d545e0bfc724998439a9ce0a0df82e19, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 652.319
+      value: 290
       objectReference: {fileID: 0}
     - target: {fileID: 6634188815237647400, guid: d545e0bfc724998439a9ce0a0df82e19, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1058.6985
+      value: 482
       objectReference: {fileID: 0}
     - target: {fileID: 6634188815237647400, guid: d545e0bfc724998439a9ce0a0df82e19, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3072,6 +3105,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6294500931621639826, guid: d545e0bfc724998439a9ce0a0df82e19, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1988358849}
+    - targetCorrespondingSourceObject: {fileID: 6294500931621639826, guid: d545e0bfc724998439a9ce0a0df82e19, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1988358852}
   m_SourcePrefab: {fileID: 100100000, guid: d545e0bfc724998439a9ce0a0df82e19, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
