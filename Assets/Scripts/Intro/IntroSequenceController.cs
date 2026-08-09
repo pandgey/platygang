@@ -98,11 +98,17 @@ public class IntroSequenceController : MonoBehaviour
     IEnumerator FadeOutAndLoad()
     {
         float t = 0f;
+        Color startColor = image.color;
+
         while (t < fadeOutDuration)
         {
             t += Time.deltaTime;
+            float alpha = Mathf.Lerp(1f, 0f, t / fadeOutDuration);
+            image.color = new Color(startColor.r, startColor.g, startColor.b, alpha);
             yield return null;
         }
+
+        image.color = new Color(startColor.r, startColor.g, startColor.b, 0f);
 
         SceneManager.LoadScene(gameplaySceneName);
     }
