@@ -3,18 +3,17 @@ using UnityEngine;
 public class SC_ObstacleSpawner : MonoBehaviour
 {
     public Transform ship;
-    public GameObject asteroidPrefab;
-    public GameObject cometPrefab;
+    public GameObject[] obstaclePrefabs;
 
     [Header("Spawn settings")]
     public float spawnDistance = 600f;
-    public float spawnMaxAngle = 85f; // half angle from forward, 90 = full hemisphere in front
+    public float spawnMaxAngle = 85f;
 
     public float aimLeadDistance = 30f;
 
     [Header("Spawn rate ramp")]
-    public float spawnInterval = 0.1f;
-    public float minSpawnInterval = 0.001f;
+    public float spawnInterval = 2f;
+    public float minSpawnInterval = 0.3f;
     public float rateIncreasePercentPerSecond = 5f;
 
     float timer;
@@ -47,7 +46,7 @@ public class SC_ObstacleSpawner : MonoBehaviour
 
     void SpawnObstacle(Vector3 spawnPos)
     {
-        GameObject prefab = Random.value < 0.5f ? asteroidPrefab : cometPrefab;
+        GameObject prefab = obstaclePrefabs[Random.Range(0, obstaclePrefabs.Length)];
         GameObject obj = Instantiate(prefab, spawnPos, Quaternion.identity);
 
         Vector3 aimPoint = ship.position + ship.forward * aimLeadDistance;
