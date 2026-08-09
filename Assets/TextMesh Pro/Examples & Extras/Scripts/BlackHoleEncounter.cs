@@ -184,8 +184,7 @@ public class BlackHoleEncounter : MonoBehaviour
 
         if (success)
         {
-            Time.timeScale = 1f;
-
+            // stays in slow-mo through the bounce, resets once control returns
             if (blackHoleInstance != null)
             {
                 StartCoroutine(ShrinkAndDestroyBlackHole());
@@ -196,7 +195,6 @@ public class BlackHoleEncounter : MonoBehaviour
         {
             if (isFinal)
             {
-                // stays in slow-mo through the cinematic, no explosion/game over here
                 StartCoroutine(FinalBlackHoleCinematic());
             }
             else
@@ -312,6 +310,7 @@ public class BlackHoleEncounter : MonoBehaviour
         }
 
         ship.position = originalStartPos;
+        Time.timeScale = 1f;
         shipRigidbody.isKinematic = false;
         shipController.enabled = true;
     }
