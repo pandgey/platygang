@@ -21,6 +21,10 @@ public class BlackHoleEncounter : MonoBehaviour
     public Slider escapeBar;
     public CanvasGroup blackFadeCanvasGroup;
     public GameObject drawingImageObject;
+    public Image drawingImage;
+    public Sprite drawingFrameA;
+    public Sprite drawingFrameB;
+    public float drawingJitterInterval = 0.1f;
 
     [Header("Spawn")]
     public float sideDistance = 150f;
@@ -279,12 +283,27 @@ public class BlackHoleEncounter : MonoBehaviour
         }
 
         drawingImageObject.SetActive(true);
+        Coroutine jitterRoutine = StartCoroutine(JitterDrawing());
 
         yield return new WaitForSeconds(drawingDisplayDuration);
+
+        StopCoroutine(jitterRoutine);
+
         GameState.carriedFuel = fuelSystem.CurrentFuel;
         GameState.carriedHealth = shipHealth.currentHealth;
 
         SceneManager.LoadScene(nextSceneName);
+    }
+
+    IEnumerator JitterDrawing()
+    {
+        bool showingA = true;
+        while (true)
+        {
+            drawingImage.sprite = showingA ? drawingFrameA : drawingFrameB;
+            showingA = !showingA;
+            yield return new WaitForSeconds(drawingJitterInterval);
+        }
     }
 
     IEnumerator EscapeBounce()

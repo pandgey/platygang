@@ -331,7 +331,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 1b783d308ffc5954faa89b5779cf2b1a, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d924bce9ac600a040b3610eb3e4ecc8a, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1003,6 +1003,10 @@ MonoBehaviour:
   escapeBar: {fileID: 888712721}
   blackFadeCanvasGroup: {fileID: 2025239714}
   drawingImageObject: {fileID: 192466084}
+  drawingImage: {fileID: 192466085}
+  drawingFrameA: {fileID: 21300000, guid: d924bce9ac600a040b3610eb3e4ecc8a, type: 3}
+  drawingFrameB: {fileID: 21300000, guid: 41ce768ec2391f6458961e51ef12ee56, type: 3}
+  drawingJitterInterval: 0.35
   sideDistance: 250
   forwardDistance: 200
   fadeInDuration: 1
@@ -1020,7 +1024,7 @@ MonoBehaviour:
   pullSpeed: 10
   finalPullSpeed: 6
   overshootDistance: 5
-  bounceDuration: 2
+  bounceDuration: 0.5
 --- !u!4 &693130021
 Transform:
   m_ObjectHideFlags: 0
@@ -1361,6 +1365,7 @@ MonoBehaviour:
   spawnDistance: 600
   spawnMaxAngle: 50
   aimLeadDistance: 30
+  speedMultiplier: 1
   spawnInterval: 2
   minSpawnInterval: 0.1
   rateIncreasePercentPerSecond: 10
