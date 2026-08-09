@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class BlackHoleEncounter : MonoBehaviour
 {
@@ -11,12 +12,15 @@ public class BlackHoleEncounter : MonoBehaviour
     public SC_SpaceshipController shipController;
     public Health shipHealth;
     public Rigidbody shipRigidbody;
+    public Camera mainCamera;
     public GameObject blackHolePrefab;
 
     [Header("UI")]
     public GameObject mashPromptUI;
     public TMP_Text mashPromptText;
     public Slider escapeBar;
+    public CanvasGroup blackFadeCanvasGroup;
+    public GameObject drawingImageObject;
 
     [Header("Spawn")]
     public float sideDistance = 150f;
@@ -28,11 +32,21 @@ public class BlackHoleEncounter : MonoBehaviour
     public float barGainPerPress = 6f;
     public float timeLimit = 6f;
 
+    [Header("Final black hole (inescapable)")]
+    public float finalBarDecayPerSecond = 15f; // similar feel to the normal one
+    public float finalBarGainPerPress = 1.5f;  // deliberately too weak to keep up with decay
+    public float finalTimeLimit = 8f;
+    public float cameraZoomDuration = 2f;
+    public float blackFadeDuration = 2f;
+    public float drawingDisplayDuration = 3f;
+    public string nextSceneName = "AlienGalaxy";
+
     [Header("Slow motion")]
     public float slowMoTimeScale = 0.15f;
 
     [Header("Black hole pull")]
     public float pullSpeed = 2f;
+    public float finalPullSpeed = 6f;
 
     [Header("Escape bounce")]
     public float overshootDistance = 5f;
@@ -40,14 +54,31 @@ public class BlackHoleEncounter : MonoBehaviour
 
     bool spawnedOnLeft;
     bool escapeKeyIsA;
+    bool isFinal = false;
     GameObject blackHoleInstance;
     bool challengeActive = false;
     float barValue;
     float timer;
 
+    float currentDecayRate;
+    float currentGainPerPress;
+    float currentPullSpeed;
+
     Vector3 originalStartPos;
 
     public void TriggerBlackHole()
+    {
+        isFinal = false;
+        BeginEncounter(barDecayPerSecond, timeLimit, barGainPerPress);
+    }
+
+    public void TriggerFinalBlackHole()
+    {
+        isFinal = true;
+        BeginEncounter(finalBarDecayPerSecond, finalTimeLimit, finalBarGainPerPress);
+    }
+
+    void BeginEncounter(float decayRate, float limit, float gainPerPress)
     {
         spawnedOnLeft = Random.value < 0.5f;
         float sideSign = spawnedOnLeft ? -1f : 1f;
@@ -61,7 +92,7 @@ public class BlackHoleEncounter : MonoBehaviour
 
         escapeKeyIsA = !spawnedOnLeft;
 
-        StartChallenge();
+        StartChallenge(decayRate, limit, gainPerPress);
     }
 
     IEnumerator FadeInBlackHole(Vector3 targetScale)
@@ -83,23 +114,26 @@ public class BlackHoleEncounter : MonoBehaviour
         }
     }
 
-    void StartChallenge()
+    void StartChallenge(float decayRate, float limit, float gainPerPress)
     {
         challengeActive = true;
         barValue = 50f;
-        timer = timeLimit;
+        timer = limit;
+        currentDecayRate = decayRate;
+        currentGainPerPress = gainPerPress;
+        currentPullSpeed = isFinal ? finalPullSpeed : pullSpeed;
 
         originalStartPos = ship.position;
 
         shipController.enabled = false;
-        shipRigidbody.linearVelocity *= 0.1f;
+        shipRigidbody.linearVelocity = Vector3.zero;
+        shipRigidbody.isKinematic = true;
 
         Time.timeScale = slowMoTimeScale;
 
         mashPromptUI.SetActive(true);
         escapeBar.maxValue = 100f;
         escapeBar.value = barValue;
-        // bar fills toward whichever side you're actually mashing to escape
         escapeBar.direction = escapeKeyIsA ? Slider.Direction.RightToLeft : Slider.Direction.LeftToRight;
         mashPromptText.text = "MASH " + (escapeKeyIsA ? "A" : "D") + " TO ESCAPE!";
     }
@@ -114,11 +148,11 @@ public class BlackHoleEncounter : MonoBehaviour
         if (blackHoleInstance != null)
         {
             Vector3 pullDirection = (blackHoleInstance.transform.position - ship.position).normalized;
-            ship.position += pullDirection * pullSpeed * Time.unscaledDeltaTime;
+            ship.position += pullDirection * currentPullSpeed * Time.unscaledDeltaTime;
         }
 
         timer -= Time.unscaledDeltaTime;
-        barValue -= barDecayPerSecond * Time.unscaledDeltaTime;
+        barValue -= currentDecayRate * Time.unscaledDeltaTime;
 
         Keyboard kb = Keyboard.current;
         if (kb != null)
@@ -126,7 +160,7 @@ public class BlackHoleEncounter : MonoBehaviour
             bool pressed = escapeKeyIsA ? kb.aKey.wasPressedThisFrame : kb.dKey.wasPressedThisFrame;
             if (pressed)
             {
-                barValue += barGainPerPress;
+                barValue += currentGainPerPress;
             }
         }
 
@@ -147,10 +181,11 @@ public class BlackHoleEncounter : MonoBehaviour
     {
         challengeActive = false;
         mashPromptUI.SetActive(false);
-        Time.timeScale = 1f;
 
         if (success)
         {
+            Time.timeScale = 1f;
+
             if (blackHoleInstance != null)
             {
                 StartCoroutine(ShrinkAndDestroyBlackHole());
@@ -159,11 +194,20 @@ public class BlackHoleEncounter : MonoBehaviour
         }
         else
         {
-            if (blackHoleInstance != null)
+            if (isFinal)
             {
-                Destroy(blackHoleInstance);
+                // stays in slow-mo through the cinematic, no explosion/game over here
+                StartCoroutine(FinalBlackHoleCinematic());
             }
-            shipHealth.TakeDamage(shipHealth.maxHealth);
+            else
+            {
+                Time.timeScale = 1f;
+                if (blackHoleInstance != null)
+                {
+                    Destroy(blackHoleInstance);
+                }
+                shipHealth.TakeDamage(shipHealth.maxHealth);
+            }
         }
     }
 
@@ -187,6 +231,62 @@ public class BlackHoleEncounter : MonoBehaviour
             Destroy(blackHoleInstance);
         }
     }
+
+    IEnumerator FinalBlackHoleCinematic()
+    {
+        shipRigidbody.linearVelocity = Vector3.zero;
+        shipRigidbody.isKinematic = true;
+
+        Vector3 camStartPos = mainCamera.transform.position;
+        Quaternion camStartRot = mainCamera.transform.rotation;
+        Vector3 camTargetPos = blackHoleInstance != null ? blackHoleInstance.transform.position : ship.position;
+        Quaternion camTargetRot = camStartRot;
+
+        if (blackHoleInstance != null)
+        {
+            camTargetRot = Quaternion.LookRotation(blackHoleInstance.transform.position - camStartPos);
+        }
+
+        float t = 0f;
+        while (t < cameraZoomDuration)
+        {
+            t += Time.unscaledDeltaTime;
+            float frac = t / cameraZoomDuration;
+            mainCamera.transform.position = Vector3.Lerp(camStartPos, camTargetPos, frac);
+            mainCamera.transform.rotation = Quaternion.Slerp(camStartRot, camTargetRot, frac);
+            yield return null;
+        }
+
+        Time.timeScale = 1f;
+
+        float fadeT = 0f;
+        blackFadeCanvasGroup.gameObject.SetActive(true);
+        blackFadeCanvasGroup.alpha = 0f;
+        while (fadeT < blackFadeDuration)
+        {
+            fadeT += Time.deltaTime;
+            blackFadeCanvasGroup.alpha = Mathf.Clamp01(fadeT / blackFadeDuration);
+
+            // actively pin the camera here too, so nothing else can nudge it during the fade
+            mainCamera.transform.position = camTargetPos;
+            mainCamera.transform.rotation = camTargetRot;
+
+            yield return null;
+        }
+        blackFadeCanvasGroup.alpha = 1f;
+
+        if (blackHoleInstance != null)
+        {
+            Destroy(blackHoleInstance);
+        }
+
+        drawingImageObject.SetActive(true);
+
+        yield return new WaitForSeconds(drawingDisplayDuration);
+
+        SceneManager.LoadScene(nextSceneName);
+    }
+
     IEnumerator EscapeBounce()
     {
         Vector3 pullDirectionAtEnd = (originalStartPos - ship.position).normalized;
@@ -210,6 +310,7 @@ public class BlackHoleEncounter : MonoBehaviour
         }
 
         ship.position = originalStartPos;
+        shipRigidbody.isKinematic = false;
         shipController.enabled = true;
     }
 }
