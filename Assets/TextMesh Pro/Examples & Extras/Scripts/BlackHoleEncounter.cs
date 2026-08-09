@@ -21,7 +21,7 @@ public class BlackHoleEncounter : MonoBehaviour
     [Header("Spawn")]
     public float sideDistance = 150f;
     public float forwardDistance = 200f;
-    public float approachTime = 3f;
+    public float fadeInDuration = 1f;
 
     [Header("Mash Challenge")]
     public float barDecayPerSecond = 12f;
@@ -35,7 +35,7 @@ public class BlackHoleEncounter : MonoBehaviour
     public float pullSpeed = 2f;
 
     [Header("Escape bounce")]
-    public float overshootDistance = 5f; // how far past the original point it swings before settling
+    public float overshootDistance = 5f;
     public float bounceDuration = 1.5f;
 
     bool spawnedOnLeft;
@@ -55,15 +55,32 @@ public class BlackHoleEncounter : MonoBehaviour
         Vector3 spawnPos = ship.position + ship.forward * forwardDistance + ship.right * sideDistance * sideSign;
         blackHoleInstance = Instantiate(blackHolePrefab, spawnPos, Quaternion.identity);
 
+        Vector3 targetScale = blackHoleInstance.transform.localScale;
+        blackHoleInstance.transform.localScale = Vector3.zero;
+        StartCoroutine(FadeInBlackHole(targetScale));
+
         escapeKeyIsA = !spawnedOnLeft;
 
-        StartCoroutine(ApproachThenChallenge());
+        StartChallenge();
     }
 
-    IEnumerator ApproachThenChallenge()
+    IEnumerator FadeInBlackHole(Vector3 targetScale)
     {
-        yield return new WaitForSeconds(approachTime);
-        StartChallenge();
+        float t = 0f;
+        while (t < fadeInDuration)
+        {
+            t += Time.unscaledDeltaTime;
+            if (blackHoleInstance != null)
+            {
+                blackHoleInstance.transform.localScale = Vector3.Lerp(Vector3.zero, targetScale, t / fadeInDuration);
+            }
+            yield return null;
+        }
+
+        if (blackHoleInstance != null)
+        {
+            blackHoleInstance.transform.localScale = targetScale;
+        }
     }
 
     void StartChallenge()
@@ -72,17 +89,18 @@ public class BlackHoleEncounter : MonoBehaviour
         barValue = 50f;
         timer = timeLimit;
 
-        // remember where the ship actually started, before any pull happens
         originalStartPos = ship.position;
 
         shipController.enabled = false;
-        shipRigidbody.linearVelocity *= 0.1f; // kill most of the forward drift instantly
+        shipRigidbody.linearVelocity *= 0.1f;
 
         Time.timeScale = slowMoTimeScale;
 
         mashPromptUI.SetActive(true);
         escapeBar.maxValue = 100f;
         escapeBar.value = barValue;
+        // bar fills toward whichever side you're actually mashing to escape
+        escapeBar.direction = escapeKeyIsA ? Slider.Direction.RightToLeft : Slider.Direction.LeftToRight;
         mashPromptText.text = "MASH " + (escapeKeyIsA ? "A" : "D") + " TO ESCAPE!";
     }
 
@@ -93,14 +111,12 @@ public class BlackHoleEncounter : MonoBehaviour
             return;
         }
 
-        // slowly drag the ship toward the black hole while the challenge is active
         if (blackHoleInstance != null)
         {
             Vector3 pullDirection = (blackHoleInstance.transform.position - ship.position).normalized;
             ship.position += pullDirection * pullSpeed * Time.unscaledDeltaTime;
         }
 
-        // unscaled so the mash window stays real-time even while the world is in slow-mo
         timer -= Time.unscaledDeltaTime;
         barValue -= barDecayPerSecond * Time.unscaledDeltaTime;
 
@@ -133,24 +149,46 @@ public class BlackHoleEncounter : MonoBehaviour
         mashPromptUI.SetActive(false);
         Time.timeScale = 1f;
 
-        if (blackHoleInstance != null)
-        {
-            Destroy(blackHoleInstance);
-        }
-
         if (success)
         {
+            if (blackHoleInstance != null)
+            {
+                StartCoroutine(ShrinkAndDestroyBlackHole());
+            }
             StartCoroutine(EscapeBounce());
         }
         else
         {
+            if (blackHoleInstance != null)
+            {
+                Destroy(blackHoleInstance);
+            }
             shipHealth.TakeDamage(shipHealth.maxHealth);
         }
     }
 
+    IEnumerator ShrinkAndDestroyBlackHole()
+    {
+        Vector3 startScale = blackHoleInstance.transform.localScale;
+        float t = 0f;
+
+        while (t < fadeInDuration)
+        {
+            t += Time.deltaTime;
+            if (blackHoleInstance != null)
+            {
+                blackHoleInstance.transform.localScale = Vector3.Lerp(startScale, Vector3.zero, t / fadeInDuration);
+            }
+            yield return null;
+        }
+
+        if (blackHoleInstance != null)
+        {
+            Destroy(blackHoleInstance);
+        }
+    }
     IEnumerator EscapeBounce()
     {
-        // overshoot past the original point, away from where the black hole was
         Vector3 pullDirectionAtEnd = (originalStartPos - ship.position).normalized;
         Vector3 currentPos = ship.position;
         Vector3 overshotPos = originalStartPos + pullDirectionAtEnd * overshootDistance;
